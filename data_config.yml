@@ -1,0 +1,17 @@
+datasets:
+    - mlbench_function: hypercube
+      params :
+          n: [100,500]
+          d : [3, 5]
+          sides : [3]
+          sd: [0.2]
+    - mlbench_function: shapes
+      params :
+          n: [100,500,2000]
+    - mlbench_function: waveform
+      params :
+          n: [100,500]
+settings:
+  train_test_split_args : 
+    test_size : 0.25
+    random_state : 42

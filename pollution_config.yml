@@ -1,0 +1,5 @@
+random_seed : 42
+pollution_parameters:
+  duplicate_factor : [3, 7]
+  completness_pollution: [0.2, 0.6]
+  feature_accuracy_pollution: [0.2, 0.6]
