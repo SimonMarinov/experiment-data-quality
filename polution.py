@@ -42,7 +42,7 @@ def pollute_feature_accuracy(df, pollution_level, rng):
 
     #remove target col
     target_col = pol_df['classes']
-    pol_df = pol_df.drop(columns= 'classes')
+    pol_df = pol_df.drop(columns='classes')
     
     values_to_pol = int(pollution_level * total_samples) 
     non_null_indices = pol_df.notnull().values.nonzero()
@@ -63,7 +63,7 @@ def pollute_feature_accuracy(df, pollution_level, rng):
 
 # only works for continues independet variables and class dependent variable
 def pollute_uniqueness(df, duplication_factor, rng):
-    polluted_df = pd.DataFrame(columns=df.columns)
+    polluted_df = df.copy()
     for value in df['classes'].unique():
         y = df['classes']
         pollute = df[y == value].values
@@ -73,12 +73,8 @@ def pollute_uniqueness(df, duplication_factor, rng):
 
         polution = []
         for idx in random_indices:
-            polution.append(pollute[idx])
+            polluted_df.append(pd.DataFrame(polution, index=[idx]))
 
-        # fastest what i can thing of can not append array to df sou create array with all values 
-        polluted_df_values = np.concatenate((polluted_df.values, pollute, polution))    
-
-        polluted_df = pd.DataFrame(columns=df.columns,data=polluted_df_values)
 
     return polluted_df
 
