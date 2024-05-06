@@ -1,4 +1,4 @@
-datasets:
+mlbench_datasets:
   - mlbench_function: hypercube
     params:
       n: [50, 200]
@@ -19,6 +19,15 @@ datasets:
     params:
       n: [500]
       d: [2, 5, 8]
+  - mlbench_function: spirals
+    params:
+      n: [100, 500]
+      sd: [0.2, 0.4]
+      cycles: [1, 3, 5]
+sklearn_datasets:
+  load_iris: iris
+  load_breast_cancer: breast_cancer
+  load_wine: wine
 settings:
   train_test_split_args:
     test_size: 0.25

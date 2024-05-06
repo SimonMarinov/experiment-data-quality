@@ -6,6 +6,7 @@ import rpy2.robjects as ro
 from itertools import product
 import os
 from sklearn.model_selection import train_test_split
+from sklearn import datasets
 
 
 # Activate automatic conversion of R objects to pandas dataframes
@@ -48,8 +49,27 @@ def generate_datasets(config):
 
     return dataset_li
 
+def safe_df(df, config, train_data_dir, test_data_dir, dataset_name, param_string=''):
+
+    train_test_split_args = config['settings']['train_test_split_args']
+    X_train, X_test, y_train, y_test = train_test_split(df.drop(columns='classes'),
+                                                            df['classes'],
+                                                            **train_test_split_args)
+
+
+    train_df = X_train.join(y_train)
+    test_df = X_test.join(y_test)
+    
+    train_df.to_pickle(os.path.join(dataset_dir, train_data_dir,
+                                    dataset_name + param_string +".pkl"))
+
+    
+    test_df.to_pickle(os.path.join(dataset_dir, test_data_dir, 
+                                    dataset_name + param_string +".pkl"))
+
 
 #safe the dataset into_dataset
+    
 
 def main(config_file, dataset_dir, test_data_dir, train_data_dir):
     prefix = 'mlbench_'
@@ -58,7 +78,7 @@ def main(config_file, dataset_dir, test_data_dir, train_data_dir):
     with open(config_file, 'r') as file:
         config = yaml.safe_load(file)
 
-    for dataset_config in config['datasets']:
+    for dataset_config in config['mlbench_datasets']:
         dataset_name = dataset_config['mlbench_function']
         mlbench_function_name = prefix + dataset_config['mlbench_function'] 
         mlbench_function = getattr(mlbench, mlbench_function_name)
@@ -74,21 +94,23 @@ def main(config_file, dataset_dir, test_data_dir, train_data_dir):
             # Generate dataset
             df = generate_dataset(mlbench_function, combination)
 
-            train_test_split_args = config['settings']['train_test_split_args']
-            X_train, X_test, y_train, y_test = train_test_split(df.drop(columns='classes'),
-                                                                 df['classes'],
-                                                                 **train_test_split_args)
-    
+            safe_df(df, config, train_data_dir, test_data_dir, dataset_name, param_string)
 
-            train_df = X_train.join(y_train)
-            test_df = X_test.join(y_test)
-            
-            train_df.to_pickle(os.path.join(dataset_dir, train_data_dir,
-                                            dataset_name + param_string +".pkl"))
+    for dataset_name, save_name in config['sklearn_datasets'].items():
+        try:
+            dataset = getattr(datasets, dataset_name)()
+        except AttributeError:
+            print(f"Dataset '{dataset_name}' not found in sklearn.datasets.")
+            continue
+        
+        df = pd.DataFrame(data=dataset.data, columns=dataset.feature_names)
+        df['classes'] = dataset.target
 
-            
-            test_df.to_pickle(os.path.join(dataset_dir, test_data_dir, 
-                                           dataset_name + param_string +".pkl"))
+
+        safe_df(df, config, train_data_dir, test_data_dir, save_name)
+
+
+
 
 if __name__ == "__main__":
     config_file = "data_config.yml"  # Specify your YAML configuration file here
