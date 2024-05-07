@@ -26,3 +26,12 @@ models:
       - name: classifier
         module: sklearn.neighbors
         class: KNeighborsClassifier
+  SVM:
+    steps:
+      - name: imputer
+        module: sklearn.impute
+        class: SimpleImputer
+        strategy: median
+      - name: classifier
+        module: sklearn.svm
+        class: SVC
