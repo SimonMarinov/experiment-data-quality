@@ -86,10 +86,9 @@ def pollute_df(df,config):
     df_com = df.copy()
     df_fea = df.copy()
 
-
-    df_all = pollute_uniqueness(df_all, config['duplicate_factor'], np.random.default_rng(rng.integers(1)))
     df_all = pollute_completeness(df_all, config['completness_pollution'], np.random.default_rng(rng.integers(1)))
     df_all = pollute_feature_accuracy(df_all, config['feature_accuracy_pollution'], np.random.default_rng(rng.integers(1)))
+    df_all = pollute_uniqueness(df_all, config['duplicate_factor'], np.random.default_rng(rng.integers(1)))
 
     df_uni = pollute_uniqueness(df_uni, config['duplicate_factor'], np.random.default_rng(rng.integers(1)))
     df_com = pollute_completeness(df_com, config['completness_pollution'], np.random.default_rng(rng.integers(1)))
