@@ -9,27 +9,21 @@ import pickle
 # Function to pollute dataset for completeness
 def pollute_completeness(df, pollution_level, rng):
     pol_df = df.copy()
-    total_samples = len(df)
-    missing_count = 0
+    total_samples = df.size
 
     #remove target col
     target_col = pol_df['classes']
     pol_df = pol_df.drop(columns='classes')
-    
-    for feature in df.columns:
-        missing_count += df[feature].isnull().sum()
 
-    pol_df.fillna(np.nan, inplace=True)
-    values_to_pol = int(pollution_level * total_samples) - missing_count
-    non_null_indices = pol_df.notnull().values.nonzero()
-    indeces_li = list(zip(non_null_indices[0],non_null_indices[1]))
-    
+    values_to_pol = int(pollution_level * total_samples) 
+    non_null_indices = pol_df.notnull().to_numpy()
+    non_null_indices = np.argwhere(non_null_indices == True)
+
     # Randomly choose indices from non-null values
-    random_indices = rng.choice(len(non_null_indices[0]), values_to_pol, replace=False)
+    random_indices = rng.choice(non_null_indices, min(values_to_pol,len(non_null_indices)), replace=False)
 
     # Replace values at randomly chosen indices with NaN
-    for idx in random_indices:
-        x, y = indeces_li[idx]
+    for x, y in random_indices:
         pol_df.iat[x, y] = np.nan
 
 
@@ -38,22 +32,21 @@ def pollute_completeness(df, pollution_level, rng):
 
 def pollute_feature_accuracy(df, pollution_level, rng):
     pol_df = df.copy()
-    total_samples = len(df)
+    total_samples = df.size
 
     #remove target col
     target_col = pol_df['classes']
     pol_df = pol_df.drop(columns='classes')
     
     values_to_pol = int(pollution_level * total_samples) 
-    non_null_indices = pol_df.notnull().values.nonzero()
-    indeces_li = list(zip(non_null_indices[0],non_null_indices[1]))
+    non_null_indices = pol_df.notnull().to_numpy()
+    non_null_indices = np.argwhere(non_null_indices == True)
     
     # Randomly choose indices from non-null values
-    random_indices = rng.choice(len(non_null_indices[0]), values_to_pol, replace=False)
+    random_indices = rng.choice(non_null_indices, min(values_to_pol,len(non_null_indices)), replace=False)
 
     # Replace values at randomly chosen indices with NaN
-    for idx in random_indices:
-        x, y = indeces_li[idx]
+    for x, y in random_indices:
         pol = rng.normal(loc=0, scale=pollution_level)
         pol_df.iat[x, y] = pol_df.iat[x, y] *  pol
 
