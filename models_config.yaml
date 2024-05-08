@@ -1,5 +1,6 @@
 models:
   Decision Tree:
+    random_seed: 42 # Add random seed parameter here
     steps:
       - name: imputer
         module: sklearn.impute
@@ -9,6 +10,7 @@ models:
         module: sklearn.tree
         class: DecisionTreeClassifier
   Logistic Regression:
+    random_seed: 42 # Add random seed parameter here
     steps:
       - name: imputer
         module: sklearn.impute
@@ -18,6 +20,7 @@ models:
         module: sklearn.linear_model
         class: LogisticRegression
   KNN:
+    random_seed: 42 # Add random seed parameter here
     steps:
       - name: imputer
         module: sklearn.impute
@@ -27,6 +30,7 @@ models:
         module: sklearn.neighbors
         class: KNeighborsClassifier
   SVM:
+    random_seed: 42 # Add random seed parameter here
     steps:
       - name: imputer
         module: sklearn.impute
